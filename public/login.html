@@ -59,19 +59,19 @@
 
         <div class="container">
 
-            <form action="">
+            <form id="form-login">
                 <h1>Login | One Piece</h1>
                 <div class="input-box">
-                    <input placeholder="Usuário" type="email">
+                    <input placeholder="Email" type="email" id="email_input">
                     <i class="fa-solid fa-user"></i>
                 </div>
                 <div class="input-box">
-                    <input type="text" name="minha_senha" placeholder="Digite sua senha" onfocus="this.type='password'"
+                    <input id="senha_input" type="text" placeholder="Digite sua senha" onfocus="this.type='password'"
                         autocomplete="off">
                     <i class="fa-solid fa-lock"></i>
                 </div>
 
-                <button type="submit" class="btn-auth" onclick="">Login</button>
+                <button type="submit" class="btn-auth">Login</button>
 
                 <div class="register-link">
                     <p>Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
@@ -80,17 +80,13 @@
                 <div id="div_aguardar" class="loading-div">
                     <img src="./assets/circle-loading.gif" id="loading-gif">
                 </div>
+
+                
+                <div id="div_erros_login"></div>
             </form>
 
         </div>
-
-        <!-- <div id="div_aguardar" class="loading-div">
-                    <img src="./assets/circle-loading.gif" id="loading-gif">
-                </div> -->
-
-        <div id="div_erros_login"></div>
-    </div>
-    </div>
+        
     </div>
 
     <!--footer inicio-->
@@ -107,6 +103,13 @@
 </html>
 
 <script>
+
+const formLogin = document.getElementById("form-login");
+
+formLogin.addEventListener('submit', (event) => {
+    event.preventDefault()
+    entrar()
+});
 
 
     function entrar() {
@@ -143,16 +146,17 @@
             if (resposta.ok) {
                 console.log(resposta);
 
+                console.log('passei aqui, resposta ok');
+
                 resposta.json().then(json => {
                     console.log(json);
                     console.log(JSON.stringify(json));
                     sessionStorage.EMAIL_USUARIO = json.email;
                     sessionStorage.NOME_USUARIO = json.nome;
                     sessionStorage.ID_USUARIO = json.id;
-                    sessionStorage.AQUARIOS = JSON.stringify(json.aquarios)
 
                     setTimeout(function () {
-                        window.location = "./dashboard/cards.html";
+                        window.location = "/dashboard/cards.html";
                     }, 1000); // apenas para exibir o loading
 
                 });

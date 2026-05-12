@@ -183,10 +183,17 @@ body{
     background-image: url(../assets/img/about-us-bg.png);
     background-size: cover;
     width: 100%;
-    height: 90vh;
+    height: 95vh;
     position: relative;
     display: flex;
     justify-content: center;
+}
+
+.about-one-piece .title h1 {
+    font-family: "Pirata One", system-ui;
+    font-size: 50px;
+    color: #51391c;
+    margin: 2rem 0 0 0;
 }
 
 .banner {

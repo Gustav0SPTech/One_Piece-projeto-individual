@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" />
 </head>
 
-<body onload="listar()">
+<body>
   <!--header inicio-->
   <!-- <div class="header">
     <div class="container">
@@ -48,88 +48,92 @@
   </div> -->
   <!--header fim-->
 
-  <div class="login">
-    <div class="alerta_erro">
-      <div class="card_erro" id="cardErro">
-        <span id="mensagem_erro"></span>
-      </div>
-    </div>
 
-    <div class="container">
-    <form action="">
+
+  <div class="container">
+
+    <div class="login">
+      <div class="alerta_erro">
+        <div class="card_erro" id="cardErro">
+          <span id="mensagem_erro"></span>
+        </div>
+      </div>
+
+      <form id="form-cadastro">
         <h1>Bem-vindo!</h1>
         <h3>Cadastro | One Piece</h3>
 
         <div class="input-box">
-            <input id="nome_input" type="text" placeholder="Seu nome">
-            <i class="fa-solid fa-user"></i>
+          <input id="nome_input" type="text" placeholder="Seu nome">
+          <i class="fa-solid fa-user"></i>
         </div>
 
         <div class="input-box">
-            <input id="email_input" type="email" placeholder="meuemail@email.com">
-            <i class="fa-solid fa-envelope"></i>
+          <input id="email_input" type="email" placeholder="meuemail@email.com">
+          <i class="fa-solid fa-envelope"></i>
         </div>
 
         <div class="input-box">
-            <input id="senha_input" type="password" placeholder="Sua senha">
-            <i class="fa-solid fa-lock"></i>
+          <input id="senha_input" type="password" placeholder="Sua senha">
+          <i class="fa-solid fa-lock"></i>
         </div>
 
         <div class="input-box">
-            <input id="confirmacao_senha_input" type="password" placeholder="Confirme sua senha">
-            <i class="fa-solid fa-shield-halved"></i>
+          <input id="confirmacao_senha_input" type="password" placeholder="Confirme sua senha">
+          <i class="fa-solid fa-shield-halved"></i>
         </div>
 
-        <button type="submit" class="btn-auth" onclick="cadastrar()">Cadastrar</button>
+        <button type="submit" class="btn-auth">Cadastrar</button>
 
         <div id="div_aguardar" class="loading-div" style="display: none;">
-            <img src="./assets/circle-loading.gif" id="loading-gif" />
+          <img src="./assets/circle-loading.gif" id="loading-gif" />
         </div>
 
         <div class="register-link">
-            <p>Já possui uma conta? <a href="login.html">Faça Login</a></p>
+          <p>Já possui uma conta? <a href="login.html">Faça Login</a></p>
         </div>
-    </form>
-</div>
+      </form>
+    </div>
 
-  <!--footer inicio-->
-  <!-- <div class="footer">
+    <!--footer inicio-->
+    <!-- <div class="footer">
     <div class="container">
       <h4>Feito com amor por aluno &hearts; SPTech &copy; 2023</h4>
       <span class="version">v1.0.0</span>
     </div>
   </div> -->
-  <!--footer fim-->
+    <!--footer fim-->
 </body>
 
 </html>
 
 <script>
+  const formCadastro = document.getElementById("form-cadastro")
+
+  formCadastro.addEventListener('submit', (event) => {
+    event.preventDefault()
+    cadastrar()
+  })
 
   // Array para armazenar empresas cadastradas para validação de código de ativação 
-  let listaEmpresasCadastradas = [];
+  // let listaEmpresasCadastradas = [];
 
   function cadastrar() {
-    // aguardar();
+    aguardar();
 
     //Recupere o valor da nova input pelo nome do id
     // Agora vá para o método fetch logo abaixo
     var nomeVar = nome_input.value;
     var emailVar = email_input.value;
-    var cpfVar = cpf_input.value; 
     var senhaVar = senha_input.value;
     var confirmacaoSenhaVar = confirmacao_senha_input.value;
-    var codigoVar = codigo_input.value;
-    var idEmpresaVincular
 
     // Verificando se há algum campo em branco
     if (
       nomeVar == "" ||
       emailVar == "" ||
       senhaVar == "" ||
-      cpfVar == "" ||
-      confirmacaoSenhaVar == "" ||
-      codigoVar == ""
+      confirmacaoSenhaVar == ""
     ) {
       cardErro.style.display = "block";
       mensagem_erro.innerHTML =
@@ -142,17 +146,18 @@
     }
 
     // Verificando se o código de ativação é de alguma empresa cadastrada
-    for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
-      if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
-        idEmpresaVincular = listaEmpresasCadastradas[i].id
-        console.log("Código de ativação válido.");
-        break;
-      } else {
-        cardErro.style.display = "block";
-        mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
-        finalizarAguardar();
-      }
-    }
+
+    // for (let i = 0; i < listaEmpresasCadastradas.length; i++) {
+    //   if (listaEmpresasCadastradas[i].codigo_ativacao == codigoVar) {
+    //     idEmpresaVincular = listaEmpresasCadastradas[i].id
+    //     console.log("Código de ativação válido.");
+    //     break;
+    //   } else {
+    //     cardErro.style.display = "block";
+    //     mensagem_erro.innerHTML = "(Mensagem de erro para código inválido)";
+    //     finalizarAguardar();
+    //   }
+    // }
 
     // Enviando o valor da nova input
     fetch("/usuarios/cadastrar", {
@@ -165,9 +170,7 @@
         // Agora vá para o arquivo routes/usuario.js
         nomeServer: nomeVar,
         emailServer: emailVar,
-        cpfServer: cpfVar,
-        senhaServer: senhaVar,
-        idEmpresaVincularServer: idEmpresaVincular
+        senhaServer: senhaVar
       }),
     })
       .then(function (resposta) {
@@ -195,26 +198,6 @@
       });
 
     return false;
-  }
-
-  // Listando empresas cadastradas 
-  function listar() {
-    fetch("/empresas/listar", {
-      method: "GET",
-    })
-      .then(function (resposta) {
-        resposta.json().then((empresas) => {
-          empresas.forEach((empresa) => {
-            listaEmpresasCadastradas.push(empresa);
-
-            console.log("listaEmpresasCadastradas")
-            console.log(listaEmpresasCadastradas[0].codigo_ativacao)
-          });
-        });
-      })
-      .catch(function (resposta) {
-        console.log(`#ERRO: ${resposta}`);
-      });
   }
 
   function sumirMensagem() {
