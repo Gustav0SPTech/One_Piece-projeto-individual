@@ -1,4 +1,4 @@
-var alertas = [];
+    var alertas = [];
 
 function obterdados(idAquario) {
     fetch(`/medidas/tempo-real/${idAquario}`)
@@ -116,6 +116,7 @@ function transformarEmDiv({ idAquario, temp, grauDeAviso, grauDeAvisoCor }) {
     </div>
     `;
 }
+
 
 function atualizacaoPeriodica() {
     JSON.parse(sessionStorage.AQUARIOS).forEach(item => {

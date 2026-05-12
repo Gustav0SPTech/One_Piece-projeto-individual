@@ -41,7 +41,8 @@ body {
 
 .alerta_erro{
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  align-items: flex-end;
 }
 
 .card_erro {
