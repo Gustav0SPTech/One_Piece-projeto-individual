@@ -1,0 +1,116 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+/* PIRATA ONE | font-family: "Pirata One", system-ui; */
+@import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* ARVO | font-family: "Arvo", serif;*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* font-family: "Poppins", sans-serif; */
+
+:root {
+  --cor-primaria: #ffffff;
+  --font-titulo: "Pirata One", system-ui;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Barlow', 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+  display: flex;
+  /* width: 100vw; */
+}
+
+.header-left a {
+  text-decoration: none;
+  color: white;
+}
+
+.header-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  height: 100vh;
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  border-right: 3px solid #ffaa7f;
+  background-color: #ffffff;
+}
+
+.header-left h3 {
+  font-family: var(--font-titulo);
+}
+
+.hello {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hello h3 {
+  color: #e3b062;
+  font-weight: 300;
+  font-size: 1.2rem;
+}
+
+.hello h3 span {
+  font-weight: 800;
+}
+
+.btn-nav {
+    border: none;
+    width: 40%;
+    text-align: center;
+    background-color: rgb(159, 205, 239);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 200;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.09);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-nav-white {
+    border: none;
+    width: 40%;
+    text-align: center;
+    background-color: rgb(159, 205, 239);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 200;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.09);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-nav-white h3 {
+  color: #000000;
+  padding: 0;
+  margin: 0;
+}
+
+.btn-nav h3,
+.btn-logout h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.btn-logout {
+  margin: 0;
+  padding: 0;
+  width: 20%;
+  background-color: #32b9cd;
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 15px;
+  margin-bottom: 100px;
+  cursor: pointer;
+}

@@ -25,9 +25,32 @@ body {
     background-position: center;
 }
 
+.seta {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-700%);
+    z-index: 10;
+}
+
+/* O código que você já tinha, mantido abaixo: */
+.seta img {
+    width: 50px;
+    height: 45px;
+    transition: opacity 0.2s;
+}
+
+.seta img:hover {
+    opacity: 0.5;
+}
+
 .loading-div {
   width: 50px;
   display: none;
+}
+
+#div_aguardar {
+    display: none;
 }
 
 .loading-div img {
