@@ -30,38 +30,59 @@
 
 <body>
 
-    <div class="sidebar">
-        <div class="header-left">
-            <div class="logo">
-                <!-- <img src="../assets/img/One_Piece_Logo.png" alt=""> -->
-                 <h3>One Piece Dashboard</h3>
-            </div>
+    <div class="main">
 
-            <div class="hello">
-                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./cards.html">
-                    <h3>Quiz</h3>
-                </a>
-            </div>
-
-            <div class="btn-nav">
-
-                <h3>Estatísticas</h3>
-
-            </div>
-
-            <div class="btn-nav-white">
-                <a href="./mural.html">
-                    <h3>Fórum</h3>
-                </a>
-            </div>
-
+        <div class="seta">
+            <a href="index.html" class="link">
+                <img src="../assets/img/seta-preta-esquerda.png" alt="">
+            </a>
         </div>
-    </div>
 
+        <div class="sidebar">
+            <div class="header-left">
+                <div class="logo">
+                    <h3>One Piece Dashboard</h3>
+                </div>
+                <div class="hello">
+                    <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
+                </div>
+                <div class="btn-nav-white">
+                    <a href="./cards.html">
+                        <h3>Quiz</h3>
+                    </a>
+                </div>
+                <div class="btn-nav">
+                    <h3>Estatísticas</h3>
+                </div>
+                <div class="btn-nav-white">
+                    <a href="./mural.html">
+                        <h3>Teste</h3>
+                    </a>
+                </div>
+                <div class="btn-logout">
+                    <a href="../index.html">
+                        <h3>Sair</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="container">
+
+                <div class="dashboard-grid">
+                    <div class="card kpi">KPI 1</div>
+                    <div class="card kpi">KPI 2</div>
+                    <div class="card kpi">KPI 3</div>
+
+                    <div class="card chart double-width">Gráfico Grande</div>
+                    <div class="card chart">Gráfico Menor</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </body>
 
 </html>
@@ -73,7 +94,7 @@
 
     window.onload = exibirAquariosDoUsuario();
 
-    function exibirAquariosDoUsuario() {
+    /* function exibirAquariosDoUsuario() {
         var aquarios = JSON.parse(sessionStorage.AQUARIOS);
         aquarios.forEach(item => {
             document.getElementById("btnAquario").innerHTML += `
@@ -100,7 +121,7 @@
         if (aquarios.length > 0) {
             exibirAquario(aquarios[0].id)
         }
-    }
+    }*/
 
     function alterarTitulo(idAquario) {
         var tituloAquario = document.getElementById(`tituloAquario${idAquario}`)
