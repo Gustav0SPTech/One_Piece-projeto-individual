@@ -19,16 +19,15 @@ body {
     background-color: rgb(218, 238, 255);
 }
 
+/* div que engloba o header com o main */
+
 .inicial {
     position: relative;
-    /* Necessário para posicionar o pseudo-elemento */
+    /* position relative no elemento pai para manter o filho (::before) preso a ele */
     overflow: hidden;
-    /* Garante que o blur não "vaze" para fora da div */
+    /* position, overflow e ::before utilizados para dar o efeito de blur no background-image */
     width: 100%;
     min-height: 100vh;
-    /* background-color: #dceaf7; */
-    /* background-image: url(../assets/img/mar3.png);
-    background-size: cover; */
 }
 
 .inicial::before {

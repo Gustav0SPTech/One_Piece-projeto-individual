@@ -19,6 +19,35 @@ body {
   font-family: 'Barlow', 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.main {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.seta {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 1000;
+}
+
+.seta .link {
+    display: flex;
+    text-decoration: none;
+    color: black;
+    transition: opacity 0.2s;
+}
+
+.seta .link img {
+    width: 30px;
+    height: 30px;
+}
+
+.seta a:hover {
+    opacity: 0.5;
+}
+
 .sidebar {
   display: flex;
   /* width: 100vw; */
@@ -35,7 +64,7 @@ body {
   left: 0;
   z-index: 999;
   height: 100vh;
-  width: 15%;
+  width: 15vw;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -48,6 +77,11 @@ body {
   font-family: var(--font-titulo);
 }
 
+.logo h3 {
+  font-size: 3rem;
+  text-align: center;
+}
+
 .hello {
   width: 100%;
   display: flex;
@@ -57,11 +91,11 @@ body {
 .hello h3 {
   color: #e3b062;
   font-weight: 300;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .hello h3 span {
-  font-weight: 800;
+  font-weight: 1000;
 }
 
 .btn-nav {
@@ -106,7 +140,7 @@ body {
   margin: 0;
   padding: 0;
   width: 20%;
-  background-color: #32b9cd;
+  background-color: #f1943c;
   color: white;
   border-radius: 10px;
   text-align: center;
@@ -114,3 +148,26 @@ body {
   margin-bottom: 100px;
   cursor: pointer;
 }
+
+.dashboard {
+  max-width: 90%;
+  height: 98vh;
+  background-color: rgb(0, 0, 0);
+  
+}
+
+.dashboard .container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 20px;
+}
+
+.dashboard .container .kpi-boxes {
+  display: flex;
+  align-items: center;
+  width: 70%;
+  padding: 2% 0;
+  border: 1px solid white;
+}
+
+

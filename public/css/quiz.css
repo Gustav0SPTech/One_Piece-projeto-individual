@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&display=swap');
+/* PIRATA ONE | font-family: "Pirata One", system-ui; */
+@import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+/* ARVO | font-family: "Arvo", serif;*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* font-family: "Poppins", sans-serif; */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+  --cor-primaria: rgb(26, 51, 110);
+  --font-titulo: "Pirata One", system ui;
+}
+
+.inicial {
+    position: relative;
+    /* position relative no elemento pai para manter o filho (::before) preso a ele */
+    overflow: hidden;
+    /* position, overflow e ::before utilizados para dar o efeito de blur no background-image */
+    width: 100%;
+    min-height: 100vh;
+}
+
+.inicial::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(../assets/img/manga-onepiece.jpg);
+    background-size: cover;
+    background-position: center;
+    filter: blur(0.5px);
+    transform: scale(1.1);
+    z-index: -1;
+}
+
+.header {
+    width: 100%;
+    height: 10vh;
+    padding: 20px 0;
+    background-color: transparent;
+    backdrop-filter: blur(1px);
+    background-color: white;
+}
+
+.header .container {
+    max-width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.navbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar img {
+    width: 200px;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 50px;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+    font-family: var(--font-titulo);
+    font-size: 40px;
+    font-weight: 400;
+    transition: 0.2s;
+}
+
+.nav-item a:hover {
+    color: #898989;
+    border-bottom: 3px solid #999999;
+    border-radius: 9%;
+}
+
+.navbar .btn-div {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-default {
+    border: none;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: "Arvo", serif;
+    font-weight: 200;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.09);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.btn-default:hover {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+}
