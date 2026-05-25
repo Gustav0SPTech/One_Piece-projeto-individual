@@ -1,62 +1,65 @@
--- Arquivo de apoio, caso você queira criar tabelas como as aqui criadas para a API funcionar.
--- Você precisa executar os comandos no banco de dados para criar as tabelas,
--- ter este arquivo aqui não significa que a tabela em seu BD estará como abaixo!
+-- One Piece Database
 
-/*
-comandos para mysql server
-*/
+CREATE DATABASE one_piece_projeto;
 
-CREATE DATABASE aquatech;
+USE one_piece_projeto;
 
-USE aquatech;
-
-CREATE TABLE empresa (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	razao_social VARCHAR(50),
-	cnpj CHAR(14),
-	codigo_ativacao VARCHAR(50)
-);
+SHOW TABLES;
 
 CREATE TABLE usuario (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	nome VARCHAR(50),
-	email VARCHAR(50),
-	senha VARCHAR(50),
-	fk_empresa INT,
-	FOREIGN KEY (fk_empresa) REFERENCES empresa(id)
+id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(70),
+email VARCHAR(255),
+senha VARCHAR(50),
+dtHrCadastro DATETIME DEFAULT NOW()
 );
 
-CREATE TABLE aviso (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	titulo VARCHAR(100),
-	descricao VARCHAR(150),
-	fk_usuario INT,
-	FOREIGN KEY (fk_usuario) REFERENCES usuario(id)
+-- LÓGICA DO QUIZ
+CREATE TABLE quiz (
+id_quiz INT PRIMARY KEY AUTO_INCREMENT,
+descricao VARCHAR(255),
+qtd_questoes INT
 );
 
-create table aquario (
-/* em nossa regra de negócio, um aquario tem apenas um sensor */
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	descricao VARCHAR(300),
-	fk_empresa INT,
-	FOREIGN KEY (fk_empresa) REFERENCES empresa(id)
+CREATE TABLE questoes (
+id_questao INT PRIMARY KEY AUTO_INCREMENT,
+questao VARCHAR(255),
+fk_quiz INT,
+CONSTRAINT ctFkQuiz
+FOREIGN KEY (fk_quiz) REFERENCES quiz(id_quiz)
 );
 
-/* esta tabela deve estar de acordo com o que está em INSERT de sua API do arduino - dat-acqu-ino */
-
-create table medida (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-	dht11_umidade DECIMAL,
-	dht11_temperatura DECIMAL,
-	luminosidade DECIMAL,
-	lm35_temperatura DECIMAL,
-	chave TINYINT,
-	momento DATETIME,
-	fk_aquario INT,
-	FOREIGN KEY (fk_aquario) REFERENCES aquario(id)
+-- tabela que guarda as alternativas de cada questão, sendo uma correta (tinyint 1)
+CREATE TABLE alternativas (
+id_alternativa INT PRIMARY KEY AUTO_INCREMENT,
+texto_alternativa VARCHAR (150),
+correta TINYINT, -- se questão correta ? 1 : 0
+fk_questao INT,
+CONSTRAINT ctFkQuestao
+FOREIGN KEY (fk_questao) REFERENCES questoes(id_questao)
 );
 
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 1', 'ED145B');
-insert into empresa (razao_social, codigo_ativacao) values ('Empresa 2', 'A1B2C3');
-insert into aquario (descricao, fk_empresa) values ('Aquário de Estrela-do-mar', 1);
-insert into aquario (descricao, fk_empresa) values ('Aquário de Peixe-dourado', 2);
+-- respostas do usuário ao quiz
+CREATE TABLE respostas_usuario (
+id_resposta INT PRIMARY KEY AUTO_INCREMENT,
+fk_usuario INT,
+fk_alternativa INT,
+CONSTRAINT ctFkUsuarioResposta
+FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario),
+CONSTRAINT ctFkAlternativa
+FOREIGN KEY (fk_alternativa) REFERENCES alternativas(id_alternativa)
+);
+
+-- resultados do usuário no quiz
+CREATE TABLE resultados (
+id_resultado INT PRIMARY KEY AUTO_INCREMENT,
+acertos INT,
+erros INT,
+dtHrExecucao DATETIME DEFAULT NOW(),
+fk_usuario INT,
+fk_quiz INT,
+CONSTRAINT ctFkUsuarioResultado
+FOREIGN KEY (fk_usuario) REFERENCES usuario(id_usuario),
+CONSTRAINT ctFkQuizResultado 
+FOREIGN KEY (fk_quiz) REFERENCES quiz(id_quiz)
+);
