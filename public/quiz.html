@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
   <meta charset="UTF-8">
@@ -12,9 +12,9 @@
 
   <div class="inicial">
     <div class="header">
-      <div class="container">
+      <div class="container-nav">
         <div class="navbar">
-          <img src="assets/img/logo_white-black.jpg" alt="">
+          <img src="assets/img/logo_white-black.jpg" alt="One Piece Logo">
 
           <ul class="nav-list">
             <li class="nav-item"><a href="index.html">Home</a></li>
@@ -25,21 +25,338 @@
 
           <div class="btn-div">
             <a href="index.html">
-              <button class="btn-default">
-                Sair
-              </button>
+              <button class="btn-default">Sair</button>
             </a>
-            <!-- <a href="cadastro.html">
-              <button class="btn-default">
-                Cadastrar
-              </button>
-            </a> -->
           </div>
         </div>
       </div>
     </div>
+
+    <div class="box-container">
+
+      <div id="div_boas_vindas" class="card-quiz-inicial">
+        <h1 class="titulo-quiz">Conhecimentos Gerais</h1>
+        <p class="subtitulo-quiz">Teste seus conhecimentos sobre o universo de Eiichiro Oda e prove que você está pronto
+          para a Grand Line!</p>
+        <button id="btnIniciarQuiz" onclick="iniciarQuiz()" class="btn-luffy">INICIAR QUIZ</button>
+      </div>
+
+      <div id="div_jogo" class="card-quiz-jogo" style="display: none;">
+
+        <div class="painel-pontuacao">
+          <div>Acertos: <span id="spanCertas" class="badge-acerto">0</span></div>
+          <div>Erros: <span id="spanErradas" class="badge-erro">0</span></div>
+        </div>
+
+        <div class="info-questao">
+          Questão atual: <span id="spanNumeroDaQuestaoAtual">0</span> de <span id="qtdQuestoes">0</span>
+        </div>
+
+        <div class="pergunta-box">
+          <span id="spanQuestaoExibida"></span>
+        </div>
+
+        <div class="instrucao">
+          <em>Escolha uma opção dentre as abaixo:</em>
+        </div>
+
+        <div class="opcoes-container">
+          <label class="opcao-label" id="labelOpcaoUm">
+            <input type="radio" id="primeiraOpcao" name="option" value="alt_0" />
+            <span id="textoOpcaoUm"></span>
+          </label>
+
+          <label class="opcao-label" id="labelOpcaoDois">
+            <input type="radio" id="segundaOpcao" name="option" value="alt_1" />
+            <span id="textoOpcaoDois"></span>
+          </label>
+
+          <label class="opcao-label" id="labelOpcaoTres">
+            <input type="radio" id="terceiraOpcao" name="option" value="alt_2" />
+            <span id="textoOpcaoTres"></span>
+          </label>
+
+          <label class="opcao-label" id="labelOpcaoQuatro">
+            <input type="radio" id="quartaOpcao" name="option" value="alt_3" />
+            <span id="textoOpcaoQuatro"></span>
+          </label>
+        </div>
+
+        <div class="botoes-container">
+          <button onclick="submeter()" id="btnSubmeter" class="btn-quiz-acao">Submeter resposta</button>
+          <button onclick="avancar()" id="btnProx" class="btn-quiz-acao" disabled>Avançar para próxima questão</button>
+          <button onclick="tentarNovamente()" id="btnTentarNovamente" class="btn-quiz-acao btn-reset"
+            style="display: none;">Tentar novamente</button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
 </body>
 
 </html>
+
+<script>
+
+  // variáveis globais
+  var listaDeQuestoes = [];       // vetor que guarda as perguntas do banco
+  var listaDeAlternativas = [];   // vetor para guardar alternativas, porém estarão soltas
+  var numeroDaQuestaoAtual = 0;
+
+  var certas = 0;                 // acertos
+  var erradas = 0;                // erros
+  // ambos serão gravados no banco, com o insert definido na model
+
+  var quantidadeDeQuestoes = 0;   // tamanho do quiz
+  var idQuizAtual = 1;            // Id do quiz, definido como 1 por ter apenas esse quiz no momento
+
+  // Função chamada pelo botão "INICIAR QUIZ"
+  function iniciarQuiz() {
+    obterPerguntasDoQuiz();
+  }
+
+  // função para trazer os dados do banco
+  function obterPerguntasDoQuiz() {
+    fetch("/quiz/buscar/" + idQuizAtual, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(function (resposta) {
+        if (resposta.ok) {
+          resposta.json().then(function (dadosDoBanco) {
+            console.log("Dados brutos que vieram do banco:", dadosDoBanco);
+
+            // Chamamos a função simplificada para organizar os vetores
+            // aqui chamar a função para organizar os vetores, jogando os dados do banco como parâmetro
+            organizarDadosSimplificados(dadosDoBanco);
+          });
+        } else {
+          console.error("Erro ao obter dados do servidor.");
+          alert("Erro ao carregar o Quiz.");
+        }
+      })
+      .catch(function (erro) {
+        console.log("Erro no fetch do quiz:", erro);
+      });
+  }
+
+  // função para organizar os dados de forma simplificad,
+  // passamos por cada linha para organizar as três questões e suas alternativas 
+  function organizarDadosSimplificados(dadosBrutos) {
+
+    // for para passar por cada linha que veio do banco de dados
+    for (let i = 0; i < dadosBrutos.length; i++) {
+      var linhaAtual = dadosBrutos[i];
+
+      // guardamos todas as alternativas em um vetor
+      listaDeAlternativas.push({
+        idAlternativa: linhaAtual.id_alternativa,
+        texto: linhaAtual.texto_alternativa,
+        correta: linhaAtual.correta,
+        fkQuestao: linhaAtual.id_questao
+      });
+
+
+      // lógica simples para não duplicar a pergunta no vetor de questões
+      // se a lista de questões estiver vazia, ou se a pergunta atual for diferente da última que foi guardada
+      if (listaDeQuestoes.length == 0 || listaDeQuestoes[listaDeQuestoes.length - 1].idQuestao != linhaAtual.id_questao) {
+        listaDeQuestoes.push({
+          idQuestao: linhaAtual.id_questao,
+          pergunta: linhaAtual.questao
+        });
+      }
+    }
+
+    // define a quantidade total de perguntas baseada no tamanho do nosso vetor
+    quantidadeDeQuestoes = listaDeQuestoes.length;
+
+    // se encontramos perguntas, esconde a tela inicial, mostra o jogo e exibe a primeira questão (índice 0)
+    if (quantidadeDeQuestoes > 0) {
+      div_boas_vindas.style.display = "none";
+      div_jogo.style.display = "block";
+      document.getElementById("qtdQuestoes").innerHTML = quantidadeDeQuestoes;
+
+      preencherHTMLcomQuestaoAtual(0);
+    }
+    console.log("Lista de alternativas depois de organizar", listaDeAlternativas);
+    console.log("Lista de questões depois de organizar:", listaDeQuestoes);
+  }
+
+  // função para montar a questão na tela
+  function preencherHTMLcomQuestaoAtual(index) {
+    habilitarAlternativas(true);
+
+    var questaoAtual = listaDeQuestoes[index];
+    numeroDaQuestaoAtual = index;
+
+    // atualiza os textos no html
+    document.getElementById("spanNumeroDaQuestaoAtual").innerHTML = index + 1;
+    document.getElementById("spanQuestaoExibida").innerHTML = questaoAtual.pergunta;
+
+    // vetor temporário apenas para guardar as alternativas da questão atual
+    var alternativasDestaQuestao = [];
+
+    // for para buscar no vetor global, as alternativas que pertencem a questão atual
+    for (let i = 0; i < listaDeAlternativas.length; i++) {
+      if (listaDeAlternativas[i].fkQuestao == questaoAtual.idQuestao) {
+        alternativasDestaQuestao.push(listaDeAlternativas[i]);
+      }
+    }
+
+    // Injeta os textos diretamente nas opções HTML de forma linear
+    document.getElementById("textoOpcaoUm").innerHTML = alternativasDestaQuestao[0].texto;
+    document.getElementById("textoOpcaoDois").innerHTML = alternativasDestaQuestao[1].texto;
+    document.getElementById("textoOpcaoTres").innerHTML = alternativasDestaQuestao[2].texto;
+    document.getElementById("textoOpcaoQuatro").innerHTML = alternativasDestaQuestao[3].texto;
+  }
+
+  function submeter() {
+    var options = document.getElementsByName("option");
+    var hasChecked = false;
+
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].checked) {
+        hasChecked = true;
+        break;
+      }
+    }
+
+    if (!hasChecked) {
+      alert("Selecione uma alternativa antes de submeter!");
+      return;
+    }
+
+    btnSubmeter.disabled = true;
+    btnProx.disabled = false;
+    habilitarAlternativas(false);
+
+    checarResposta();
+  }
+
+  function habilitarAlternativas(trueOrFalse) {
+    var disabledStatus = !trueOrFalse;
+    primeiraOpcao.disabled = disabledStatus;
+    segundaOpcao.disabled = disabledStatus;
+    terceiraOpcao.disabled = disabledStatus;
+    quartaOpcao.disabled = disabledStatus;
+  }
+
+  function checarResposta() {
+    var questaoAtual = listaDeQuestoes[numeroDaQuestaoAtual];
+    var options = document.getElementsByName("option");
+
+    for (let i = 0; i < options.length; i++) {
+      var opcaoAlvo = options[i];
+      var labelPai = opcaoAlvo.parentElement; // pega o elemento pai para mudar o background
+
+      // mapeia o índice correspondente (0 a 3) baseado no value do radio input
+      var indexAlternativa = i;
+      var isCorretaNoBanco = questaoAtual.alternativas[indexAlternativa].correta;
+
+      // se o usuário marcou essa opção
+      if (opcaoAlvo.checked) {
+        if (isCorretaNoBanco == 1) {
+          labelPai.classList.add("resposta-correta");
+          certas++;
+          document.getElementById("spanCertas").innerHTML = certas;
+        } else {
+          labelPai.classList.add("resposta-errada");
+          erradas++;
+          document.getElementById("spanErradas").innerHTML = erradas;
+          destacarCorreta(questaoAtual); // mostra qual era a certa
+        }
+      }
+    }
+  }
+
+  function destacarCorreta(questaoAtual) {
+    var options = document.getElementsByName("option");
+    for (let i = 0; i < options.length; i++) {
+      if (questaoAtual.alternativas[i].correta == 1) {
+        options[i].parentElement.classList.add("resposta-correta");
+      }
+    }
+  }
+
+  function avancar() {
+    btnProx.disabled = true;
+    btnSubmeter.disabled = false;
+
+    desmarcarRadioButtons();
+    limparCoresBackgroundOpcoes();
+
+    var proximoIndice = numeroDaQuestaoAtual + 1;
+
+    if (proximoIndice < quantidadeDeQuestoes) {
+      preencherHTMLcomQuestaoAtual(proximoIndice);
+    } else {
+      finalizarJogo();
+    }
+  }
+
+  function desmarcarRadioButtons() {
+    var options = document.getElementsByName("option");
+    for (let i = 0; i < options.length; i++) {
+      options[i].checked = false;
+    }
+  }
+
+  function limparCoresBackgroundOpcoes() {
+    var options = document.getElementsByName("option");
+    for (let i = 0; i < options.length; i++) {
+      options[i].parentElement.classList.remove("resposta-correta", "resposta-errada");
+    }
+  }
+
+  function finalizarJogo() {
+    btnProx.style.display = "none";
+    btnSubmeter.style.display = "none";
+    btnTentarNovamente.style.display = "block";
+    
+    var porcentagem = Math.round((certas / quantidadeDeQuestoes) * 100);
+    var msgFinal = "Quiz Concluído! Você acertou " + porcentagem + "% das questões.";
+
+    console.log(`%${porcentagem}, ${certas}, ${erradas}`);
+
+    document.getElementById("spanQuestaoExibida").innerHTML = "<h3>" + msgFinal + "</h3>";
+
+    document.querySelector(".opcoes-container").style.display = "none";
+    document.querySelector(".instrucao").style.display = "none";
+
+
+    var idUsuarioLogado = sessionStorage.ID_USUARIO;
+
+    if (idUsuarioLogado == undefined) {
+      console.log("Usuário não logado, resultado exibido apenas na tela.");
+      return;
+    }
+
+    fetch("/quiz/salvar-resultado", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        idUsuarioServer: idUsuarioLogado,
+        idQuizServer: idQuizAtual,
+        acertosServer: certas,
+        errosServer: erradas
+      })
+    })
+      .then(function (resposta) {
+        if (resposta.ok) {
+          console.log("Resultado registrado no banco com sucesso!");
+        } else {
+          console.error("Erro ao persistir os dados do quiz.");
+        }
+      });
+  }
+
+  function tentarNovamente() {
+    window.location.reload();
+  }
+</script>

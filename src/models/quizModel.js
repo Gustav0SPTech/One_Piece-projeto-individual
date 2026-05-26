@@ -13,10 +13,11 @@ function buscarQuiz(idQuiz) {
             quest.id_questao,
             quest.questao,
             alt.id_alternativa,
-            alt.resposta_alternativa
+            alt.texto_alternativa,
+            alt.correta
         FROM quiz q
         JOIN questoes quest ON quest.fk_quiz = q.id_quiz
-        JOIN alternativas alt ON alt.fk_alternativa = quest.id_questao
+        JOIN alternativas alt ON alt.fk_questao = quest.id_questao
         WHERE q.id_quiz = ${idQuiz};
     `;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
