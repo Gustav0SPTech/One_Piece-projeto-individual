@@ -14,13 +14,11 @@
     <div class="header">
       <div class="container-nav">
         <div class="navbar">
-          <img src="assets/img/logo_white-black.jpg" alt="One Piece Logo">
+          <img src="assets/img/logo_white-black.png" alt="One Piece Logo">
 
           <ul class="nav-list">
             <li class="nav-item"><a href="index.html">Home</a></li>
-            <li class="nav-item"><a href="#historia">História</a></li>
-            <li class="nav-item"><a href="#personagens">Personagens</a></li>
-            <li class="nav-item"><a href="#jogos">Jogos</a></li>
+            <li class="nav-item"><a href="dashboard/dashboard.html">Perfil</a></li>
           </ul>
 
           <div class="btn-div">
@@ -35,29 +33,32 @@
     <div class="box-container">
 
       <div id="div_boas_vindas" class="card-quiz-inicial">
-        <h1 class="titulo-quiz">Conhecimentos Gerais</h1>
+        <div class="card-titulo">
+          <h1 class="titulo-quiz">Conhecimentos Gerais</h1>
+          <img src="assets/img/gear 5.jpg" alt="">
+        </div>
         <p class="subtitulo-quiz">Teste seus conhecimentos sobre o universo de Eiichiro Oda e prove que você está pronto
           para a Grand Line!</p>
         <button id="btnIniciarQuiz" onclick="iniciarQuiz()" class="btn-luffy">INICIAR QUIZ</button>
       </div>
 
       <div id="div_jogo" class="card-quiz-jogo" style="display: none;">
-
-        <div class="painel-pontuacao">
-          <div>Acertos: <span id="spanCertas" class="badge-acerto">0</span></div>
-          <div>Erros: <span id="spanErradas" class="badge-erro">0</span></div>
-        </div>
-
         <div class="info-questao">
           Questão atual: <span id="spanNumeroDaQuestaoAtual">0</span> de <span id="qtdQuestoes">0</span>
         </div>
 
         <div class="pergunta-box">
           <span id="spanQuestaoExibida"></span>
+          <img src="assets/img/pergunta-1.jpg" alt="pergunta-imagem" id="imagemPergunta">
         </div>
+<!--         
+        <div class="painel-pontuacao">
+          <div>Acertos: <span id="spanCertas" class="badge-acerto">0</span></div>
+          <div>Erros: <span id="spanErradas" class="badge-erro">0</span></div>
+        </div> -->
 
         <div class="instrucao">
-          <em>Escolha uma opção dentre as abaixo:</em>
+          <p>Escolha uma opção dentre as abaixo:</p>
         </div>
 
         <div class="opcoes-container">
@@ -112,7 +113,8 @@
   var quantidadeDeQuestoes = 0;   // tamanho do quiz
   var idQuizAtual = 1;            // Id do quiz, definido como 1 por ter apenas esse quiz no momento
 
-  // Função chamada pelo botão "INICIAR QUIZ"
+  // função chamada pelo botão "INICIAR QUIZ"
+  // servindo como função intermediária até a chamada das perguntas do quiz
   function iniciarQuiz() {
     obterPerguntasDoQuiz();
   }
@@ -130,7 +132,6 @@
           resposta.json().then(function (dadosDoBanco) {
             console.log("Dados brutos que vieram do banco:", dadosDoBanco);
 
-            // Chamamos a função simplificada para organizar os vetores
             // aqui chamar a função para organizar os vetores, jogando os dados do banco como parâmetro
             organizarDadosSimplificados(dadosDoBanco);
           });
@@ -186,6 +187,9 @@
     console.log("Lista de questões depois de organizar:", listaDeQuestoes);
   }
 
+  // vetor temporário apenas para guardar as alternativas da questão atual
+  var alternativasDestaQuestao = [];
+
   // função para montar a questão na tela
   function preencherHTMLcomQuestaoAtual(index) {
     habilitarAlternativas(true);
@@ -198,7 +202,7 @@
     document.getElementById("spanQuestaoExibida").innerHTML = questaoAtual.pergunta;
 
     // vetor temporário apenas para guardar as alternativas da questão atual
-    var alternativasDestaQuestao = [];
+    let alternativasDestaQuestao = [];
 
     // for para buscar no vetor global, as alternativas que pertencem a questão atual
     for (let i = 0; i < listaDeAlternativas.length; i++) {
@@ -206,12 +210,16 @@
         alternativasDestaQuestao.push(listaDeAlternativas[i]);
       }
     }
+    console.log("alternativas questao atual", alternativasDestaQuestao);
+
 
     // Injeta os textos diretamente nas opções HTML de forma linear
     document.getElementById("textoOpcaoUm").innerHTML = alternativasDestaQuestao[0].texto;
     document.getElementById("textoOpcaoDois").innerHTML = alternativasDestaQuestao[1].texto;
     document.getElementById("textoOpcaoTres").innerHTML = alternativasDestaQuestao[2].texto;
     document.getElementById("textoOpcaoQuatro").innerHTML = alternativasDestaQuestao[3].texto;
+
+    console.log(alternativasDestaQuestao.correta);
   }
 
   function submeter() {
@@ -247,47 +255,62 @@
 
   function checarResposta() {
     var questaoAtual = listaDeQuestoes[numeroDaQuestaoAtual];
+    console.log(questaoAtual);
+    // console.log(alternativasDestaQuestao);
+
+    let alternativasDestaQuestao = [];
+
+    // for para buscar no vetor global, as alternativas que pertencem a questão atual
+    for (let i = 0; i < listaDeAlternativas.length; i++) {
+      if (listaDeAlternativas[i].fkQuestao == questaoAtual.idQuestao) {
+        alternativasDestaQuestao.push(listaDeAlternativas[i]);
+      }
+    }
+
     var options = document.getElementsByName("option");
 
     for (let i = 0; i < options.length; i++) {
+
+
       var opcaoAlvo = options[i];
       var labelPai = opcaoAlvo.parentElement; // pega o elemento pai para mudar o background
 
       // mapeia o índice correspondente (0 a 3) baseado no value do radio input
       var indexAlternativa = i;
-      var isCorretaNoBanco = questaoAtual.alternativas[indexAlternativa].correta;
+      var isCorretaNoBanco = alternativasDestaQuestao[indexAlternativa].correta;
+
 
       // se o usuário marcou essa opção
       if (opcaoAlvo.checked) {
         if (isCorretaNoBanco == 1) {
-          labelPai.classList.add("resposta-correta");
+          // labelPai.classList.add("resposta-correta");
           certas++;
-          document.getElementById("spanCertas").innerHTML = certas;
+          // document.getElementById("spanCertas").innerHTML = certas;
         } else {
-          labelPai.classList.add("resposta-errada");
+          // labelPai.classList.add("resposta-errada");
           erradas++;
-          document.getElementById("spanErradas").innerHTML = erradas;
-          destacarCorreta(questaoAtual); // mostra qual era a certa
+          // document.getElementById("spanErradas").innerHTML = erradas;
         }
       }
     }
   }
 
-  function destacarCorreta(questaoAtual) {
-    var options = document.getElementsByName("option");
-    for (let i = 0; i < options.length; i++) {
-      if (questaoAtual.alternativas[i].correta == 1) {
-        options[i].parentElement.classList.add("resposta-correta");
-      }
-    }
-  }
+  // pensando em não usar essa função para deixar o usuário repetir o quiz
+  // function destacarCorreta(questaoAtual) {
+  //   var options = document.getElementsByName("option");
+  //   for (let i = 0; i < options.length; i++) {
+  //     if (questaoAtual.alternativas[i].correta == 1) {
+  //       options[i].parentElement.classList.add("resposta-correta");
+  //     }
+  //   }
+  // }
 
   function avancar() {
     btnProx.disabled = true;
     btnSubmeter.disabled = false;
 
-    desmarcarRadioButtons();
-    limparCoresBackgroundOpcoes();
+    desmarcarBotoes();
+    limparCoresOpcoes();
 
     var proximoIndice = numeroDaQuestaoAtual + 1;
 
@@ -298,14 +321,14 @@
     }
   }
 
-  function desmarcarRadioButtons() {
+  function desmarcarBotoes() {
     var options = document.getElementsByName("option");
     for (let i = 0; i < options.length; i++) {
       options[i].checked = false;
     }
   }
 
-  function limparCoresBackgroundOpcoes() {
+  function limparCoresOpcoes() {
     var options = document.getElementsByName("option");
     for (let i = 0; i < options.length; i++) {
       options[i].parentElement.classList.remove("resposta-correta", "resposta-errada");
@@ -315,11 +338,21 @@
   function finalizarJogo() {
     btnProx.style.display = "none";
     btnSubmeter.style.display = "none";
+    imagemPergunta.style.display = "none";
     btnTentarNovamente.style.display = "block";
-    
-    var porcentagem = Math.round((certas / quantidadeDeQuestoes) * 100);
-    var msgFinal = "Quiz Concluído! Você acertou " + porcentagem + "% das questões.";
 
+    var porcentagem = Math.round((certas / quantidadeDeQuestoes) * 100);
+    let msgFinal = "";
+    if (porcentagem < 25) {
+      msgFinal = "Você só acertou " + porcentagem + "% das questões... pirata, acho que você deveria começar a ler o jornal do Morgans!";
+    } else if (porcentagem < 50) {
+      msgFinal = "Você acertou " + porcentagem + "% das questões. Não desanima, mas dá pra melhorar pirata... ";
+    } else if (porcentagem < 75) {
+      msgFinal = "Quiz Concluído! Você acertou " + porcentagem + "% das questões! Incrível, navegue e explore mais, que já já não tera mais mistérios em sua aventura!";
+    } else {
+      msgFinal = "Quiz Concluído! Você acertou " + porcentagem + "% das questões!!! Acho que você passou boas noites de sono explorando o mundo de One Piece";
+    }
+    
     console.log(`%${porcentagem}, ${certas}, ${erradas}`);
 
     document.getElementById("spanQuestaoExibida").innerHTML = "<h3>" + msgFinal + "</h3>";
@@ -329,6 +362,7 @@
 
 
     var idUsuarioLogado = sessionStorage.ID_USUARIO;
+    console.log(idUsuarioLogado);
 
     if (idUsuarioLogado == undefined) {
       console.log("Usuário não logado, resultado exibido apenas na tela.");
