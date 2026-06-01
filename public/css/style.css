@@ -388,7 +388,7 @@ h2 {
     font-family: "Pirata One", system-ui;
 }
 
-.acessePersonagens .btn {
+.acessePersonagens .btnPersonagens {
  padding: 15px 25px;
  border: unset;
  border-radius: 15px;
@@ -404,7 +404,7 @@ h2 {
  overflow: hidden;
 }
 
-.acessePersonagens .btn::before {
+.acessePersonagens .btnPersonagens::before {
  content: "";
  position: absolute;
  top: 0;
@@ -418,10 +418,10 @@ h2 {
  transition: all 250ms
 }
 
-.acessePersonagens .btn:hover {
+.acessePersonagens .btnPersonagens:hover {
  color: #e8e8e8;
 }
 
-.acessePersonagens .btn:hover::before {
+.acessePersonagens .btnPersonagens:hover::before {
  width: 100%;
 }
