@@ -32,7 +32,7 @@ function buscarPersonagem(idUsuario) {
 }
 
 function atualizarPersonagem(idUsuario, idPersonagem) {
-    // Adicione aspas simples ao redor da variável idPersonagem
+    // update na instrução = method put
     var instrucaoSql = `UPDATE usuario SET fk_personagem = ${idPersonagem} WHERE id_usuario = ${idUsuario};`;
     
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
