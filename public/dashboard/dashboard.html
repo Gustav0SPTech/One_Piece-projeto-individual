@@ -219,14 +219,12 @@
 
                     var corpoRanking = document.getElementById("corpo_ranking");
 
-                    // 2. Limpamos o conteúdo atual antes de popular (evita duplicar se chamar a função de novo)
                     corpoRanking.innerHTML = "";
 
-                    // 3. Laço de repetição para percorrer cada objeto do array 'dados'
+                    // printar na tela o ranking
                     for (var i = 0; i < dados.length; i++) {
                         var jogador = dados[i];
 
-                        // 4. Criamos uma linha (tr) e duas colunas (td) com os dados
                         corpoRanking.innerHTML += `
                                                 <tr>
                                                     <td>${jogador.nome}</td>
@@ -249,11 +247,10 @@
                     response.json().then(function (resposta) {
                         console.log(`Dados do recorde recebidos: ${JSON.stringify(resposta)}`);
 
-                        // A resposta vem como um array de objetos: [{ max_acertos: 10 }]
-                        // Vamos acessar o primeiro elemento e a chave 'max_acertos'
+                        // array de objetos que contém o máximo de acertos
                         var recorde = resposta[0].max_acertos;
 
-                        // Se o valor for null (nunca jogou), tratamos para exibir 0
+                        // Se o valor for null (nunca jogou), 0
                         if (recorde == null) {
                             document.getElementById("kpi_recorde").innerHTML = "0 Acertos";
                         } else {
@@ -286,12 +283,11 @@
             clearTimeout(proximaAtualizacao);
         }
 
-        // Alterado para a rota que criamos para o quiz
         fetch(`/dash/evolucao/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
             if (response.ok) {
                 response.json().then(function (resposta) {
                     console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
-                    // resposta.reverse(); // Descomente se precisar inverter a ordem cronológica
+                    // resposta.reverse();
 
                     plotarGrafico(resposta, idUsuario);
 
