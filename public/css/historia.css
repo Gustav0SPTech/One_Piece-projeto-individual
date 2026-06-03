@@ -8,8 +8,8 @@
 
 
 :root {
-  --cor-primaria: rgb(56, 14, 2);
-  --cor-hover: rgb(0, 0, 0);
+  --cor-primaria: rgb(0, 0, 0);
+  --cor-hover: rgb(68, 240, 180);
   --font-titulo: "Pirata One", system ui;
   --font-wanted: "Libre Bodoni", serif;
 }
@@ -20,7 +20,7 @@
 }
 
 body {
-    background-color: #e1ceb7
+    background-color: #f1fffd
 }
 
 .inicial {
@@ -116,72 +116,7 @@ body {
 
 .main {
     width: 100vw;
-    min-height: 130vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
 }
-
-.texto {
-    margin: 5rem 0 0;
-    width: 100vw;
-    padding: 10px 0;
-    text-align: center;
-}
-
-.main-title {
-    font-size: 100px;
-    font-family: var(--font-wanted);
-    font-weight: 1000;
-    color: var(--cor-primaria);
-}
-
-.painel-wanted {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
-    width: 95vw;
-    min-height: 100vh;
-    margin-left: 2vw;
-    box-sizing: border-box;
-    border: 2px solid var(--cor-primaria);
-    border-radius: 10px;
-    padding: 40px 20px 30px;
-}
-
-.subtitle {
-    grid-column: span 5;
-    text-align: center;
-    font-family: var(--font-wanted);
-    color: var(--cor-primaria);
-    font-weight: 1000;
-    font-size: 50px;
-}
-
-.personagem-box {
-    width: 15vw;
-    height: 40vh;
-    transition: 0.2s;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.personagem-box:hover {
-    transform: scale(1.1);
-}
-
-.luffy { background-image: url(../assets/wanted/luffy-wanted.webp); background-size: cover;}
-.zoro { background-image: url(../assets/wanted/zoro-wanted.webp); background-size: cover;}
-.nami { background-image: url(../assets/wanted/nami-wanted.webp); background-size: cover;}
-.usopp { background-image: url(../assets/wanted/usopp-wanted.webp); background-size: cover;}
-.sanji { background-image: url(../assets/wanted/sanji-wanted.webp); background-size: cover;}
-.chopper { background-image: url(../assets/wanted/chopper-wanted.webp); background-size: cover;}
-.robin { background-image: url(../assets/wanted/robin-wanted.webp); background-size: cover;}
-.franky { background-image: url(../assets/wanted/franky-wanted.webp); background-size: cover;}
-.brook { background-image: url(../assets/wanted/brook-wanted.webp); background-size: cover;}
-.jinbe { background-image: url(../assets/wanted/jinbe-wanted.webp); background-size: cover;}
-
-
-
-
-
-
-

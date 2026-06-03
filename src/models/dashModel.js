@@ -21,22 +21,12 @@ function buscarRecorde(idUsuario) {
     return database.executar(instrucaoSql);
 }
 
-function buscarQtdQuizzes(idUsuario) {
-    var instrucaoSql = `
-        SELECT COUNT(id_resultado) as qtd_quizzes 
-        FROM resultados 
-        WHERE fk_usuario = ${idUsuario};
-    `;
-    console.log("Executando a instrução SQL: \n" + instrucaoSql);
-    return database.executar(instrucaoSql);
-}
-
 function buscarEvolucaoPessoal(idUsuario, limite_linhas) {
     // acertos e a data das ultimas tentativas do quiz (evolução pessoal)
     var instrucaoSql = `
         SELECT 
             acertos, 
-            DATE_FORMAT(dtHrExecutado, '%H:%i:%s') as momento_jogo
+            DATE_FORMAT(dtHrExecucao, '%H:%i:%s') as momento_jogo
         FROM resultados 
         WHERE fk_usuario = ${idUsuario} 
         ORDER BY id_resultado DESC 
@@ -64,10 +54,19 @@ function buscarTopRanking(limite_linhas) {
     return database.executar(instrucaoSql);
 }
 
+function buscarPersonagem(idUsuario) {
+    var instrucao = `SELECT p.nome FROM personagem p JOIN usuario u ON u.fk_personagem = p.id_personagem WHERE u.id_usuario = ${idUsuario};`;
+    return database.executar(instrucao);
+}
+
+function atualizarPersonagem(idUsuario, idPersonagem) {
+    var instrucao = `UPDATE usuario SET fk_personagem = ${idPersonagem} WHERE id_usuario = ${idUsuario};`;
+    return database.executar(instrucao);
+}
+
 module.exports = {
     buscarDadosPerfil,
     buscarRecorde,
-    buscarQtdQuizzes,
     buscarEvolucaoPessoal,
     buscarTopRanking
 };

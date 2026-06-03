@@ -25,15 +25,6 @@ function buscarRecorde(req, res) {
     });
 }
 
-function buscarQtdQuizzes(req, res) {
-    var idUsuario = req.params.idUsuario;
-    dashboardModel.buscarQtdQuizzes(idUsuario).then(function (resultado) {
-        res.status(200).json(resultado);
-    }).catch(function (erro) {
-        res.status(500).json(erro.sqlMessage);
-    });
-}
-
 function buscarEvolucaoPessoal(req, res) {
     // limite linhas para gráfico de evolução
     const limite_linhas = 5;
@@ -78,11 +69,24 @@ function buscarTopRanking(req, res) {
         });
 }
 
-// Exportando as funções para serem usadas no arquivo de rotas
+function buscarPersonagem(req, res) {
+    var idUsuario = req.params.idUsuario;
+    usuarioModel.buscarPersonagem(idUsuario).then(function (resultado) {
+        res.json(resultado);
+    }).catch(function (erro) { res.status(500).json(erro.sqlMessage); });
+}
+
+function atualizarPersonagem(req, res) {
+    var idUsuario = req.params.idUsuario;
+    var idPersonagem = req.body.idPersonagemServer;
+    usuarioModel.atualizarPersonagem(idUsuario, idPersonagem).then(function (resultado) {
+        res.json(resultado);
+    }).catch(function (erro) { res.status(500).json(erro.sqlMessage); });
+}
+
 module.exports = {
     buscarDadosPerfil,
     buscarRecorde,
-    buscarQtdQuizzes,
     buscarEvolucaoPessoal,
     buscarTopRanking
 };

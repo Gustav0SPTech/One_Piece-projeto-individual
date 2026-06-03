@@ -1,5 +1,5 @@
 var usuarioModel = require("../models/usuarioModel");
- // var aquarioModel = require("../models/aquarioModel");
+// var aquarioModel = require("../models/aquarioModel");
 
 function autenticar(req, res) {
     var email = req.body.emailServer;
@@ -26,7 +26,7 @@ function autenticar(req, res) {
                             senha: resultadoAutenticar[0].senha
                         });
                         console.log(resultadoAutenticar);
-                        
+
                     } else if (resultadoAutenticar.length == 0) {
                         res.status(403).send("Email e/ou senha inválido(s)");
                     } else {
@@ -78,7 +78,33 @@ function cadastrar(req, res) {
     }
 }
 
+function buscarPersonagem(req, res) {
+    var idUsuario = req.params.idUsuario;
+    usuarioModel.buscarPersonagem(idUsuario).then(function (resultado) {
+        res.json(resultado);
+    }).catch(function (erro) {
+        console.log("\nERRO AO BUSCAR PERSONAGEM");
+        console.error(erro); 
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
+function atualizarPersonagem(req, res) {
+    var idUsuario = req.params.idUsuario;
+    var idPersonagem = req.body.idPersonagemServer;
+    
+    usuarioModel.atualizarPersonagem(idUsuario, idPersonagem).then(function (resultado) {
+        res.json(resultado);
+    }).catch(function (erro) {
+        console.log("\nERRO NO UPDATE DO PERSONAGEM:"); 
+        console.error(erro);
+        res.status(500).json(erro.sqlMessage);
+    });
+}
+
 module.exports = {
     autenticar,
-    cadastrar
+    cadastrar,
+    buscarPersonagem,
+    atualizarPersonagem
 }

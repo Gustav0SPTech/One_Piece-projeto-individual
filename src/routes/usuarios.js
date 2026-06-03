@@ -12,4 +12,9 @@ router.post("/autenticar", function (req, res) {
     usuarioController.autenticar(req, res);
 });
 
+// rotas para uso na dash
+router.get("/buscarPersonagem/:idUsuario", usuarioController.buscarPersonagem);
+
+router.put("/atualizarPersonagem/:idUsuario", usuarioController.atualizarPersonagem);
+
 module.exports = router;

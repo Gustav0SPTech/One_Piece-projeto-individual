@@ -9,8 +9,8 @@
     <title>One Piece | Dashboards</title>
 
 
-    <link rel="stylesheet" href="./../css/dashboards.css">
-    <link rel="stylesheet" href="./../css/estilo.css" />
+    <link rel="stylesheet" href="../css/dashboards.css">
+    <!-- <link rel="stylesheet" href="./../css/estilo.css"/> -->
     <script src="../js/sessao.js"></script>
     <script src="./../js/alerta.js"></script>
 
@@ -22,18 +22,17 @@
     <!-- scripts do Chart.js - 2022-1 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!--FONT AWESOME-->
-    <script src="https://kit.fontawesome.com/9f7414eb10.js" crossorigin="anonymous"></script>
 </head>
 
 <!-- <body onload=" atualizarFeed()"> -->
 
 <body>
-<!-- <div class="seta">
+    <!-- <div class="seta">
             <a href="index.html" class="link">
                 <img src="../assets/img/seta-preta-esquerda.png" alt="">
             </a>
         </div> -->
+
     <div class="main">
 
         <div class="sidebar">
@@ -50,15 +49,12 @@
                     </a>
                 </div>
                 <div class="btn-nav">
-                    <h3>Estatísticas</h3>
-                </div>
-                <div class="btn-nav">
-                    <a href="./mural.html">
-                        <h3>Teste</h3>
+                    <a href="../index.html">
+                        <h3>Home</h3>
                     </a>
                 </div>
                 <div class="btn-logout">
-                    <a href="../index.html">
+                    <a onclick="limparSessao()">
                         <h3>Sair</h3>
                     </a>
                 </div>
@@ -67,35 +63,66 @@
 
         <div class="dashboard">
             <div class="container">
-
                 <div class="dashboard-grid">
-                    
+
                     <div class="card kpi">
-                        <h4>KPI 1</h4>
-                        <p>Usuário</p>
+                        <h4>Usuário</h4>
+                        <p id="kpi_nome">Carregando...</p>
                     </div>
-                    <div class="card kpi">
-                        <h4>KPI 2</h4>
-                        <p>Personagem teste</p>
+
+                    <div class="card kpi personagem">
+                        <h4>Personagem favorito</h4>
+                        <div id="container_personagem" class="container-personagem">
+                            <img id="img_personagem" src="" style="">
+                            <p id="kpi_personagem">Nenhum</p>
+                        </div>
+                        <div class="div-atualizar">
+                            <select id="sel_mugiwara" style="margin-top: 10px; padding: 5px;">
+                                <option value="1">Luffy</option>
+                                <option value="2">Zoro</option>
+                                <option value="3">Nami</option>
+                                <option value="4">Usopp</option>
+                                <option value="5">Sanji</option>
+                                <option value="6">Chopper</option>
+                                <option value="7">Robin</option>
+                                <option value="8">Franky</option>
+                                <option value="9">Brook</option>
+                                <option value="10">Jinbe</option>
+                            </select>
+                            <button onclick="atualizarMugiwara()" class="btn-atualizar">Salvar</button>
+                        </div>
                     </div>
+
                     <div class="card kpi">
-                        <h4>KPI 3</h4>
-                        <p>Recorde</p>
+                        <h4>Recorde</h4>
+                        <p id="kpi_recorde">Carregando...</p>
                     </div>
-                    <div class="card kpi">
-                        <h4>KPI 4</h4>
-                        <p>Ranking</p>
+
+                    <div class="card kpi ranking">
+                        <h2 class="title-ranking">OS MAIORES PIRATAS</h2>
+                        <table id="tabela_ranking">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Recorde</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpo_ranking">
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="card chart maior">
-                        <h3>Evolução pessoal</h3>
+                        <h3>Evolução pessoal (Últimos Jogos)</h3>
+                        <div class="graph">
+                            <canvas id="myChartCanvas"></canvas>
+                        </div>
+                        <div class="label-captura">
+                            <p id="avisoCaptura" style="color: red"></p>
+                        </div>
                     </div>
-                    <div class="card chart">
-                        <h3>Gráfico Menor</h3>
-                    </div>
-                    
-                </div>
 
+                </div>
             </div>
         </div>
 
@@ -105,77 +132,141 @@
 </html>
 
 <script>
+
+    validarSessao()
+
+    const iconesPersonagens = {
+        "Luffy": "luffy.png", "Zoro": "zoro.png", "Nami": "nami.png",
+        "Usopp": "usopp.png", "Sanji": "sanji.png", "Chopper": "chopper.png",
+        "Robin": "robin.png", "Franky": "franky.png", "Brook": "brook.png", "Jinbe": "jinbe.png"
+    };
+
+    function atualizarMugiwara() {
+        var idPersonagem = document.getElementById("sel_mugiwara").value;
+
+        fetch(`/usuarios/atualizarPersonagem/${sessionStorage.ID_USUARIO}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                idPersonagemServer: idPersonagem
+            })
+        }).then(function (resposta) {
+            if (resposta.ok) {
+                alert("Mugiwara atualizado!");
+                // recarrega a pagina ao escolher um mugiwara diferente
+                buscarPersonagemUsuario();
+            }
+        });
+    }
+
+    function buscarPersonagemUsuario() {
+        fetch(`/usuarios/buscarPersonagem/${sessionStorage.ID_USUARIO}`)
+            .then(function (resposta) {
+                if (resposta.ok && resposta.status == 200) {
+                    resposta.json().then(function (dados) {
+                        if (dados.length > 0) {
+                            exibirPersonagem(dados[0].nome);
+                        }
+                    });
+                }
+            });
+    }
+
+    function exibirPersonagem(nome) {
+        document.getElementById("kpi_personagem").innerHTML = nome;
+        var img = document.getElementById("img_personagem");
+        img.src = `../assets/imgpersonagens/${nome.toLowerCase()}.png`; // ex: luffy.png
+        img.style.display = "block";
+    }
+
+    var idUsuario = sessionStorage.ID_USUARIO;
+
     b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+    document.getElementById("kpi_nome").innerHTML = sessionStorage.NOME_USUARIO;
 
     let proximaAtualizacao;
 
-    window.onload = exibirAquariosDoUsuario();
+    // quando carregar a página, chama a função para buscar os dados
+    window.onload = buscarDadosIniciais();
 
-    /* function exibirAquariosDoUsuario() {
-        var aquarios = JSON.parse(sessionStorage.AQUARIOS);
-        aquarios.forEach(item => {
-            document.getElementById("btnAquario").innerHTML += `
-            <button class="btn-chart" onclick="exibirAquario(${item.id})" id="btnAquario${item.id}">${item.descricao}</button>
-            `
+    function buscarDadosIniciais() {
 
-            document.getElementById("graficos").innerHTML += `
-                <div id="grafico${item.id}" class="display-none">
-                    <h3 class="tituloGraficos">
-                        <span id="tituloAquario${item.id}">${item.descricao}</span>
-                    </h3>
-                    <div class="graph">
-                        <canvas id="myChartCanvas${item.id}"></canvas>
-                    </div>
-                    <div class="label-captura">
-                        <p id="avisoCaptura${item.id}" style="color: white"></p>
-                    </div>
-                </div>
-            `
+        // buscar personagem
+        buscarPersonagemUsuario();
 
-            obterDadosGrafico(item.id)
-        });
+        buscarRecorde(idUsuario)
 
-        if (aquarios.length > 0) {
-            exibirAquario(aquarios[0].id)
-        }
-    }*/
+        // busca do ranking, que está logo abaixo
+        // sem parâmetro porque é uma função que exibe todos os usuários com limit 5
+        buscarRanking()
 
-    function alterarTitulo(idAquario) {
-        var tituloAquario = document.getElementById(`tituloAquario${idAquario}`)
-        var descricao = JSON.parse(sessionStorage.AQUARIOS).find(item => item.id == idAquario).descricao;
-        tituloAquario.innerHTML = "Últimas medidas de Temperatura e Umidade do <span style='color: #e6005a'>" + descricao + "</span>"
+        // busca dos dados para o gráfico
+        obterDadosGrafico(idUsuario);
+
     }
 
-    function exibirAquario(idAquario) {
-        let todosOsGraficos = JSON.parse(sessionStorage.AQUARIOS);
+    function buscarRanking() {
+        fetch("/dash/ranking").then(function (resposta) {
+            if (resposta.ok) {
+                if (resposta.status == 204) {
+                    console.log("Nenhum resultado no ranking.");
 
-        for (i = 0; i < todosOsGraficos.length; i++) {
-            // exibindo - ou não - o gráfico
-            if (todosOsGraficos[i].id != idAquario) {
-                let elementoAtual = document.getElementById(`grafico${todosOsGraficos[i].id}`)
-                if (elementoAtual.classList.contains("display-block")) {
-                    elementoAtual.classList.remove("display-block")
+                    return;
                 }
-                elementoAtual.classList.add("display-none")
 
-                // alterando estilo do botão
-                let btnAtual = document.getElementById(`btnAquario${todosOsGraficos[i].id}`)
-                if (btnAtual.classList.contains("btn-pink")) {
-                    btnAtual.classList.remove("btn-pink")
-                }
-                btnAtual.classList.add("btn-white")
+                resposta.json().then(function (dados) {
+                    console.log("Dados do Ranking recebidos: ", dados);
+
+                    var corpoRanking = document.getElementById("corpo_ranking");
+
+                    // 2. Limpamos o conteúdo atual antes de popular (evita duplicar se chamar a função de novo)
+                    corpoRanking.innerHTML = "";
+
+                    // 3. Laço de repetição para percorrer cada objeto do array 'dados'
+                    for (var i = 0; i < dados.length; i++) {
+                        var jogador = dados[i];
+
+                        // 4. Criamos uma linha (tr) e duas colunas (td) com os dados
+                        corpoRanking.innerHTML += `
+                                                <tr>
+                                                    <td>${jogador.nome}</td>
+                                                    <td>${jogador.recorde_pessoal}</td>
+                                                </tr>`
+                    };
+                });
+            } else {
+                console.error("Houve um erro na API de ranking!");
             }
-        }
+        }).catch(function (erro) {
+            console.error("Erro na requisição do ranking:", erro);
+        });
+    }
 
-        // exibindo - ou não - o gráfico
-        let graficoExibir = document.getElementById(`grafico${idAquario}`)
-        graficoExibir.classList.remove("display-none")
-        graficoExibir.classList.add("display-block")
+    function buscarRecorde(idUsuario) {
+        fetch(`/dash/recorde/${idUsuario}`, { cache: 'no-store' })
+            .then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (resposta) {
+                        console.log(`Dados do recorde recebidos: ${JSON.stringify(resposta)}`);
 
-        // alterando estilo do botão
-        let btnExibir = document.getElementById(`btnAquario${idAquario}`)
-        btnExibir.classList.remove("btn-white")
-        btnExibir.classList.add("btn-pink")
+                        // A resposta vem como um array de objetos: [{ max_acertos: 10 }]
+                        // Vamos acessar o primeiro elemento e a chave 'max_acertos'
+                        var recorde = resposta[0].max_acertos;
+
+                        // Se o valor for null (nunca jogou), tratamos para exibir 0
+                        if (recorde == null) {
+                            document.getElementById("kpi_recorde").innerHTML = "0 Acertos";
+                        } else {
+                            document.getElementById("kpi_recorde").innerHTML = `${recorde} Acertos`;
+                        }
+                    });
+                } else {
+                    console.error('Erro na API de recorde');
+                }
+            })
+            .catch(function (error) {
+                console.error(`Erro ao buscar recorde: ${error.message}`);
+            });
     }
 
     // O gráfico é construído com três funções:
@@ -189,25 +280,25 @@
 
     //     Se quiser alterar a busca, ajuste as regras de negócio em src/controllers
     //     Para ajustar o "select", ajuste o comando sql em src/models
-    function obterDadosGrafico(idAquario) {
-
-        alterarTitulo(idAquario)
+    function obterDadosGrafico(idUsuario) {
 
         if (proximaAtualizacao != undefined) {
             clearTimeout(proximaAtualizacao);
         }
 
-        fetch(`/medidas/ultimas/${idAquario}`, { cache: 'no-store' }).then(function (response) {
+        // Alterado para a rota que criamos para o quiz
+        fetch(`/dash/evolucao/${idUsuario}`, { cache: 'no-store' }).then(function (response) {
             if (response.ok) {
                 response.json().then(function (resposta) {
                     console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
-                    resposta.reverse();
+                    // resposta.reverse(); // Descomente se precisar inverter a ordem cronológica
 
-                    plotarGrafico(resposta, idAquario);
+                    plotarGrafico(resposta, idUsuario);
 
                 });
             } else {
                 console.error('Nenhum dado encontrado ou erro na API');
+                document.getElementById("avisoCaptura").innerHTML = "Jogue o quiz para ver sua evolução!";
             }
         })
             .catch(function (error) {
@@ -218,7 +309,7 @@
     // Esta função *plotarGrafico* usa os dados capturados na função anterior para criar o gráfico
     // Configura o gráfico (cores, tipo, etc), materializa-o na página e, 
     // A função *plotarGrafico* também invoca a função *atualizarGrafico*
-    function plotarGrafico(resposta, idAquario) {
+    function plotarGrafico(resposta, idUsuario) {
 
         console.log('iniciando plotagem do gráfico...');
 
@@ -229,17 +320,11 @@
         let dados = {
             labels: labels,
             datasets: [{
-                label: 'Umidade',
+                label: 'Acertos', // Trocado de Umidade para Acertos
                 data: [],
                 fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            },
-            {
-                label: 'Temperatura',
-                data: [],
-                fill: false,
-                borderColor: 'rgb(199, 52, 52)',
+                borderColor: 'rgb(159, 205, 239)',
+                backgroundColor: 'rgba(159, 205, 239, 0.5)',
                 tension: 0.1
             }]
         };
@@ -248,12 +333,13 @@
         console.log('Estes dados foram recebidos pela funcao "obterDadosGrafico" e passados para "plotarGrafico":')
         console.log(resposta)
 
-        // Inserindo valores recebidos em estrutura para plotar o gráfico
+        // inserindo valores recebidos em estrutura para plotar o gráfico
         for (i = 0; i < resposta.length; i++) {
             var registro = resposta[i];
-            labels.push(registro.momento_grafico);
-            dados.datasets[0].data.push(registro.umidade);
-            dados.datasets[1].data.push(registro.temperatura);
+
+            // acertos
+            labels.push(registro.momento_jogo);
+            dados.datasets[0].data.push(registro.acertos);
         }
 
         console.log('----------------------------------------------')
@@ -264,80 +350,29 @@
         console.log(dados.datasets)
         console.log('----------------------------------------------')
 
-        // Criando estrutura para plotar gráfico - config
+        // config gráfico
         const config = {
-            type: 'line',
+            type: 'line', // Você pode mudar para 'bar' se preferir gráfico de barras
             data: dados,
         };
 
         // Adicionando gráfico criado em div na tela
         let myChart = new Chart(
-            document.getElementById(`myChartCanvas${idAquario}`),
+            document.getElementById(`myChartCanvas`),
             config
         );
 
-        setTimeout(() => atualizarGrafico(idAquario, dados, myChart), 2000);
+        // Se quiser que o gráfico fique verificando se tem jogos novos enquanto o usuário está na tela:
+        // setTimeout(() => atualizarGrafico(idUsuario, dados, myChart), 5000);
     }
-
 
     // Esta função *atualizarGrafico* atualiza o gráfico que foi renderizado na página,
     // buscando a última medida inserida em tabela contendo as capturas, 
 
     //     Se quiser alterar a busca, ajuste as regras de negócio em src/controllers
     //     Para ajustar o "select", ajuste o comando sql em src/models
-    function atualizarGrafico(idAquario, dados, myChart) {
-
-
-
-        fetch(`/medidas/tempo-real/${idAquario}`, { cache: 'no-store' }).then(function (response) {
-            if (response.ok) {
-                response.json().then(function (novoRegistro) {
-
-                    obterdados(idAquario);
-                    // alertar(novoRegistro, idAquario);
-                    console.log(`Dados recebidos: ${JSON.stringify(novoRegistro)}`);
-                    console.log(`Dados atuais do gráfico:`);
-                    console.log(dados);
-
-                    let avisoCaptura = document.getElementById(`avisoCaptura${idAquario}`)
-                    avisoCaptura.innerHTML = ""
-
-
-                    if (novoRegistro[0].momento_grafico == dados.labels[dados.labels.length - 1]) {
-                        console.log("---------------------------------------------------------------")
-                        console.log("Como não há dados novos para captura, o gráfico não atualizará.")
-                        avisoCaptura.innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> Foi trazido o dado mais atual capturado pelo sensor. <br> Como não há dados novos a exibir, o gráfico não atualizará."
-                        console.log("Horário do novo dado capturado:")
-                        console.log(novoRegistro[0].momento_grafico)
-                        console.log("Horário do último dado capturado:")
-                        console.log(dados.labels[dados.labels.length - 1])
-                        console.log("---------------------------------------------------------------")
-                    } else {
-                        // tirando e colocando valores no gráfico
-                        dados.labels.shift(); // apagar o primeiro
-                        dados.labels.push(novoRegistro[0].momento_grafico); // incluir um novo momento
-
-                        dados.datasets[0].data.shift();  // apagar o primeiro de umidade
-                        dados.datasets[0].data.push(novoRegistro[0].umidade); // incluir uma nova medida de umidade
-
-                        dados.datasets[1].data.shift();  // apagar o primeiro de temperatura
-                        dados.datasets[1].data.push(novoRegistro[0].temperatura); // incluir uma nova medida de temperatura
-
-                        myChart.update();
-                    }
-
-                    // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                    proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, dados, myChart), 2000);
-                });
-            } else {
-                console.error('Nenhum dado encontrado ou erro na API');
-                // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
-                proximaAtualizacao = setTimeout(() => atualizarGrafico(idAquario, dados, myChart), 2000);
-            }
-        })
-            .catch(function (error) {
-                console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
-            });
-
+    function atualizarGrafico(idUsuario, dados, myChart) {
+        // optei por não atualizar constantemente como em um projeto IoT
+        console.log("A função atualizarGrafico foi chamada, mas está desativada para poupar chamadas ao banco.");
     }
 </script>
