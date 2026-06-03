@@ -179,7 +179,31 @@ body {
 .brook { background-image: url(../assets/wanted/brook-wanted.webp); background-size: cover;}
 .jinbe { background-image: url(../assets/wanted/jinbe-wanted.webp); background-size: cover;}
 
+footer {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: #ddffff; 
+    border-top: 2px solid rgb(224, 224, 224); 
+    padding: 20px 0;
+    text-align: center;
+    color: #000000;
+    font-family: Arial, sans-serif;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
 
+footer img {
+    width: 20%;
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
 
 
